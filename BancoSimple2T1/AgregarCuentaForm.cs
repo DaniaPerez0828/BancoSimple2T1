@@ -15,17 +15,28 @@ namespace BancoSimple2T1
     {
         public Cuenta NuevaCuenta { get;  private set; }
         private int _clienteId;
+        private readonly int clienteId;
         public AgregarCuentaForm(int clienteId)
         {
             InitializeComponent();
             _clienteId = clienteId;
+            this.clienteId = clienteId;
         }
 
         private void btnAceptar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtNumeroCuenta.Text))
+            string numeroCuenta = txtNumeroCuenta.Text.Trim();
+            decimal saldoInicial = numSaldoInicial.Value;
+
+            if (string.IsNullOrWhiteSpace(numeroCuenta))
             {
-                MessageBox.Show("El numero de cuenta es requerido");
+                MessageBox.Show("El número de cuenta es obligatorio.");
+                return;
+            }
+
+            if (saldoInicial < 0)
+            {
+                MessageBox.Show("El saldo inicial no puede ser negativo.");
                 return;
             }
 
