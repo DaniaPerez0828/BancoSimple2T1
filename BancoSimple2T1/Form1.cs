@@ -15,9 +15,14 @@ namespace BancoSimple2T1
 
         private void CargarInfo()
         {
-            var cuenta = _db.Cuenta.
-                Include(c => c.cliente).Where(c => c.Activo).
-                Select(c => new
+            try 
+            {
+                dgvClientes.DataSource = _db.Cliente.ToList();
+
+                var cuenta = _db.Cuenta.
+                Include(c => c.cliente)
+                .Where(c => c.Activo)
+                .Select(c => new
                 {
                     c.CuentaId,
                     c.NumeroCuenta,
@@ -27,38 +32,53 @@ namespace BancoSimple2T1
                     c.ClienteId
                 }).ToList();
 
-            dgvClientes.DataSource = _db.Cliente.ToList();
-            dgvCuentas.DataSource = cuenta;
-        }
 
+                dgvCuentas.DataSource = cuenta;
+            } 
+            catch (Exception ex)
+            {
+                MostrarMensaje($"Error al cargar información: {ex.Message}", "Error");
+            }
+        }
         private void btnAgregarCliente_Click(object sender, EventArgs e)
         {
             var form = new AgregarClienteForm();
             if (form.ShowDialog() == DialogResult.OK)
             {
-                _db.Cliente.Add(form.NuevoCliente);
-                _db.SaveChanges();
-                CargarInfo();
-
+                try
+                {
+                    _db.Cliente.Add(form.NuevoCliente);
+                    _db.SaveChanges();
+                    CargarInfo();
+                }
+                catch (Exception ex)
+                {
+                    MostrarMensaje($"Error al agregar cliente: {ex.Message}", "Error");
+                }
             }
         }
 
         private void btnAgregarCuenta_Click(object sender, EventArgs e)
         {
-            if (dgvClientes.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Seleccione un cliente primero");
-                return;
-            }
-            var clienteId = (int)dgvClientes.SelectedRows[0].Cells["ClienteId"].Value;
+
+            if (!ValidarSeleccionUnica(dgvClientes, "ClienteId", out int clienteId)) return;
+
             var form = new AgregarCuentaForm(clienteId);
             if (form.ShowDialog() == DialogResult.OK)
             {
-                _db.Cuenta.Add(form.NuevaCuenta);
-                _db.SaveChanges();
-                CargarInfo();
+                try
+                {
+                    _db.Cuenta.Add(form.NuevaCuenta);
+                    _db.SaveChanges();
+                    CargarInfo();
+                }
+                catch (Exception ex)
+                {
+                    MostrarMensaje($"Error al agregar cuenta: {ex.Message}", "Error");
+                }
             }
         }
+
         //Transacciones
         private void RealizarTransaccion(int cuentaOrigenId, int cuentaDestinoId, decimal monto)
         {
@@ -96,8 +116,6 @@ namespace BancoSimple2T1
                 transferencia.Commit();
                 MessageBox.Show("Transferencia realizada");
                 CargarInfo();
-
-
             }
             catch (Exception ex)
             {
@@ -111,29 +129,43 @@ namespace BancoSimple2T1
 
         private void btnTransferencia_Click(object sender, EventArgs e)
         {
-            if (dgvCuentas.SelectedRows.Count != 2)
-            {
-                MessageBox.Show("Seleccione exactamente 2 cuentas");
-                return;
-            }
-            var cuentaOrigenId = (int)dgvCuentas.SelectedRows[1].Cells["CuentaId"].Value;
-            var cuentaDestinoId = (int)dgvCuentas.SelectedRows[0].Cells["CuentaId"].Value;
-
-            var form = new TransaccionesForms(cuentaOrigenId, cuentaDestinoId);
+            if (!ValidarSeleccionDoble(dgvCuentas, "CuentaId", out int origenId, out int destinoId)) return;
+            
+            var form = new TransaccionesForms(origenId, destinoId);
             if (form.ShowDialog() == DialogResult.OK)
             {
-                RealizarTransaccion(cuentaOrigenId, cuentaDestinoId, form.Monto);
+                try
+                {
+                    RealizarTransaccion(origenId, destinoId, form.Monto);
+                }
+                catch (Exception ex)
+                {
+                    MostrarMensaje($"Error al realizar transacción: {ex.Message}", "Error");
+                }
             }
-
         }
 
         private void btnBuscarCleinte_Click(object sender, EventArgs e)
         {
-            //Busqueda de patrones con like
-            var patron = txtBuscarCliente.Text;
-            var cliente = _db.Cliente.Where(c => EF.Functions.Like(c.Nombre, $"%{patron}%")).ToList();
+            string patron = txtBuscarCliente.Text.Trim();
+            if (string.IsNullOrEmpty(patron))
+            {
+                MostrarMensaje("Por favor ingrese un nombre o parte del nombre para buscar.", "Validación");
+                return;
+            }
+            try
+            {
+                //Busqueda de patrones con like
+                var resultados = _db.Cliente
+                    .Where(c => EF.Functions.Like(c.Nombre, $"%{patron}%"))
+                    .ToList();
 
-            dgvClientes.DataSource = cliente;
+                dgvClientes.DataSource = resultados;
+            }
+            catch (Exception ex)
+            {
+                MostrarMensaje($"Error al buscar clientes: {ex.Message}", "Error");
+            }
         }
 
         private void btnVerTrans_Click(object sender, EventArgs e)
@@ -144,19 +176,57 @@ namespace BancoSimple2T1
 
         private void btnDesactivar_Click(object sender, EventArgs e)
         {
-            if (dgvCuentas.SelectedRows.Count != 1)
+            if (!ValidarSeleccionUnica(dgvCuentas, "CuentaId", out int cuentaId)) return;
+
+            try
             {
-                MessageBox.Show("Selecciones solo una cuenta exactamente");
-                return;
-            }
-            else
-            {
-                var cuentaId = (int)dgvCuentas.SelectedRows[0].Cells["CuentaId"].Value;
                 var cuenta = _db.Cuenta.Find(cuentaId);
-                cuenta.Activo = false;
-                _db.SaveChanges();
-                CargarInfo();
+                if (cuenta != null)
+                {
+                    cuenta.Activo = false;
+                    _db.SaveChanges();
+                    CargarInfo();
+                }
+                else
+                {
+                    MostrarMensaje("Cuenta no encontrada.", "Error");
+                }
             }
+            catch (Exception ex)
+            {
+                MostrarMensaje($"Error al desactivar cuenta: {ex.Message}", "Error");
+            }
+        }
+        private bool ValidarSeleccionUnica(DataGridView grid, string idColumna, out int id)
+        {
+            id = 0;
+            if (grid.SelectedRows.Count != 1)
+            {
+                MostrarMensaje("Seleccione exactamente un registro.", "Validación");
+                return false;
+            }
+
+            id = (int)grid.SelectedRows[0].Cells[idColumna].Value;
+            return true;
+        }
+
+        private bool ValidarSeleccionDoble(DataGridView grid, string idColumna, out int id1, out int id2)
+        {
+            id1 = id2 = 0;
+            if (grid.SelectedRows.Count != 2)
+            {
+                MostrarMensaje("Seleccione exactamente dos registros.", "Validación");
+                return false;
+            }
+
+            id1 = (int)grid.SelectedRows[0].Cells[idColumna].Value;
+            id2 = (int)grid.SelectedRows[1].Cells[idColumna].Value;
+            return true;
+        }
+
+        private void MostrarMensaje(string mensaje, string titulo)
+        {
+            MessageBox.Show(mensaje, titulo, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
