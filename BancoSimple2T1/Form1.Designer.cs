@@ -39,6 +39,8 @@
             txtBuscarCliente = new TextBox();
             btnVerTrans = new Button();
             btnDesactivar = new Button();
+            txtBuscarCuenta = new TextBox();
+            btnBuscarCuenta = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvClientes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvCuentas).BeginInit();
             SuspendLayout();
@@ -146,11 +148,30 @@
             btnDesactivar.UseVisualStyleBackColor = true;
             btnDesactivar.Click += btnDesactivar_Click;
             // 
+            // txtBuscarCuenta
+            // 
+            txtBuscarCuenta.Location = new Point(791, 74);
+            txtBuscarCuenta.Name = "txtBuscarCuenta";
+            txtBuscarCuenta.Size = new Size(216, 27);
+            txtBuscarCuenta.TabIndex = 12;
+            // 
+            // btnBuscarCuenta
+            // 
+            btnBuscarCuenta.Location = new Point(586, 74);
+            btnBuscarCuenta.Name = "btnBuscarCuenta";
+            btnBuscarCuenta.Size = new Size(145, 34);
+            btnBuscarCuenta.TabIndex = 11;
+            btnBuscarCuenta.Text = "Buscar Cuenta";
+            btnBuscarCuenta.UseVisualStyleBackColor = true;
+            btnBuscarCuenta.Click += btnBuscarCuenta_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1161, 591);
+            Controls.Add(txtBuscarCuenta);
+            Controls.Add(btnBuscarCuenta);
             Controls.Add(btnDesactivar);
             Controls.Add(btnVerTrans);
             Controls.Add(txtBuscarCliente);
@@ -183,5 +204,7 @@
         private TextBox txtBuscarCliente;
         private Button btnVerTrans;
         private Button btnDesactivar;
+        private TextBox txtBuscarCuenta;
+        private Button btnBuscarCuenta;
     }
 }

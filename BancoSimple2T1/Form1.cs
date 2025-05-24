@@ -15,7 +15,7 @@ namespace BancoSimple2T1
 
         private void CargarInfo()
         {
-            try 
+            try
             {
                 dgvClientes.DataSource = _db.Cliente.ToList();
 
@@ -34,7 +34,7 @@ namespace BancoSimple2T1
 
 
                 dgvCuentas.DataSource = cuenta;
-            } 
+            }
             catch (Exception ex)
             {
                 MostrarMensaje($"Error al cargar información: {ex.Message}", "Error");
@@ -130,7 +130,7 @@ namespace BancoSimple2T1
         private void btnTransferencia_Click(object sender, EventArgs e)
         {
             if (!ValidarSeleccionDoble(dgvCuentas, "CuentaId", out int origenId, out int destinoId)) return;
-            
+
             var form = new TransaccionesForms(origenId, destinoId);
             if (form.ShowDialog() == DialogResult.OK)
             {
@@ -227,6 +227,45 @@ namespace BancoSimple2T1
         private void MostrarMensaje(string mensaje, string titulo)
         {
             MessageBox.Show(mensaje, titulo, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnBuscarCuenta_Click(object sender, EventArgs e)
+        {
+            string numeroCuenta = txtBuscarCuenta.Text.Trim();
+
+            if (string.IsNullOrEmpty(numeroCuenta))
+            {
+                MessageBox.Show("Por favor ingrese un número de cuenta para buscar.", "Validación");
+                return;
+            }
+
+            try
+            {
+                var resultados = _db.Cuenta
+                    .Include(c => c.cliente)
+                    .Where(c => c.NumeroCuenta.Contains(numeroCuenta))
+                    .Select(c => new
+                    {
+                        c.CuentaId,
+                        c.NumeroCuenta,
+                        c.Saldo,
+                        NombreCliente = c.cliente.Nombre,
+                        c.Activo,
+                        c.ClienteId
+                    })
+                    .ToList();
+
+                if (resultados.Count == 0)
+                {
+                    MessageBox.Show("No se encontraron cuentas que coincidan.", "Resultado");
+                }
+
+                dgvCuentas.DataSource = resultados;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al buscar cuentas: {ex.Message}", "Error");
+            }
         }
     }
 }
