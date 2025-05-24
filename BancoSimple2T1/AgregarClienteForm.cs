@@ -21,7 +21,7 @@ namespace BancoSimple2T1
 
         private void btnAceptar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(txtIdentificacion.Text))
+            if (!CamposSonValidos(out string mensajeError))
             {
                 MessageBox.Show("Todos los campos son necesarios");
                 return;
@@ -39,6 +39,32 @@ namespace BancoSimple2T1
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+        private bool CamposSonValidos(out string mensajeError)
+        {
+            mensajeError = string.Empty;
+            string nombre = txtNombre.Text.Trim();
+            string identificacion = txtIdentificacion.Text.Trim();
+
+            if (string.IsNullOrEmpty(nombre))
+            {
+                mensajeError = "El campo Nombre es obligatorio.";
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(identificacion))
+            {
+                mensajeError = "El campo Identificación es obligatorio.";
+                return false;
+            }
+
+            if (identificacion.Length < 5)
+            {
+                mensajeError = "La Identificación debe tener al menos 5 caracteres.";
+                return false;
+            }
+
+            return true;
         }
     }
 }
