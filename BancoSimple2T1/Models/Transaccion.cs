@@ -14,6 +14,5 @@ namespace BancoSimple2T1.Models
         public string Descripcion { get; set; }
         public int ? CuentaOrigenId { get; set; }
         public int ? CuentaDestinoId { get; set; }
-
     }
 }

@@ -14,7 +14,6 @@ namespace BancoSimple2T1.Models
         public bool Activo { get; set; } = true;
         public int ClienteId { get; set; }
         public Cliente cliente { get; set; }
-
     }
 }
           

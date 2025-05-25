@@ -23,8 +23,7 @@ namespace BancoSimple2T1.Data
         //Definicion de filtro global
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Cuenta>().HasQueryFilter ( c => c.Activo);
+            modelBuilder.Entity<Cuenta>().HasQueryFilter ( c => c.Activo); 
         }
-
     }
 }
