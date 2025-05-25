@@ -14,10 +14,12 @@ namespace BancoSimple2T1
 {
     public partial class TransaccionesForms : Form
     {
+        // Una alternativa es hacer los campos de cuenta origen,destino y la base de datos como readonly para evitar errores por modificación accidental.
         public decimal Monto { get; private set; }
         private int _cuentaOrigenId;
         private int _cuentaDestinoId;
         private BancoSimpleContext db;
+
         public TransaccionesForms(int cuentaOrigenId, int cuentaDestinoId)
         {
             InitializeComponent();
@@ -29,23 +31,29 @@ namespace BancoSimple2T1
 
         }
 
+        // Carga y muestra la información de las cuentas de origen y destino
+
         private void CargarInfoCuenta()
         {
-            var cuentaOrigen = db.Cuenta.
+            try
+            {
+                var cuentaOrigen = db.Cuenta.
                 Include(c => c.cliente).
                 First(c => c.CuentaId == _cuentaOrigenId);
 
-            var cuentaDestino = db.Cuenta.
-               Include(c => c.cliente).
-               First(c => c.CuentaId == _cuentaDestinoId);
+                var cuentaDestino = db.Cuenta.
+                   Include(c => c.cliente).
+                   First(c => c.CuentaId == _cuentaDestinoId);
 
-            lblOrigen.Text = $"Nombre: {cuentaOrigen.cliente.Nombre} cuenta {cuentaOrigen.NumeroCuenta}";
-            lblDestino.Text = $"Nombre: {cuentaDestino.cliente.Nombre} cuenta {cuentaDestino.NumeroCuenta}";
-            lblDisponible.Text = $"Saldo Disponible : {cuentaOrigen.Saldo:c}";
-        }
+                lblOrigen.Text = $"Nombre: {cuentaOrigen.cliente.Nombre} cuenta {cuentaOrigen.NumeroCuenta}";
+                lblDestino.Text = $"Nombre: {cuentaDestino.cliente.Nombre} cuenta {cuentaDestino.NumeroCuenta}";
+                lblDisponible.Text = $"Saldo Disponible : {cuentaOrigen.Saldo:c}";
 
-        private void label1_Click(object sender, EventArgs e)
-        {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar la información de la cuenta: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
         }
 
@@ -58,7 +66,7 @@ namespace BancoSimple2T1
                 Close();
             }
             else {
-                MessageBox.Show("Ingrese un monto mayor a 0");
+                MessageBox.Show("Ingrese un monto válido mayor a 0.", "Monto inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
            
         }
