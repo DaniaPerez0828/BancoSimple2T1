@@ -119,6 +119,7 @@
             btnBuscarCliente.TabIndex = 7;
             btnBuscarCliente.Text = "Buscar Cliente";
             btnBuscarCliente.UseVisualStyleBackColor = true;
+            btnBuscarCliente.Click += new System.EventHandler(this.btnBuscarCliente_Click);
             // 
             // txtBuscarCliente
             // 

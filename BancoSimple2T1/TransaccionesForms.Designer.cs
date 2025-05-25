@@ -45,7 +45,6 @@
             lblOrigen.Size = new Size(50, 20);
             lblOrigen.TabIndex = 0;
             lblOrigen.Text = "label1";
-            lblOrigen.Click += label1_Click;
             // 
             // btnAceptar
             // 

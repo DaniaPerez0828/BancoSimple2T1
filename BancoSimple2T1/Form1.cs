@@ -157,9 +157,15 @@ namespace BancoSimple2T1
             {
                 //Busqueda de patrones con like
                 var resultados = _db.Cliente
-                    .Where(c => EF.Functions.Like(c.Nombre, $"%{patron}%"))
-                    .ToList();
+                .Where(c => EF.Functions.Like(c.Nombre, $"%{patron}%"))
+                .ToList();
 
+                if (resultados.Count == 0)
+                {
+                    MostrarMensaje("No se encontraron clientes que coincidan.", "Resultado");
+                }
+
+                dgvClientes.DataSource = null;
                 dgvClientes.DataSource = resultados;
             }
             catch (Exception ex)
