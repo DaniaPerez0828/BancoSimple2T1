@@ -35,7 +35,7 @@
             label1 = new Label();
             label2 = new Label();
             btnTransferencia = new Button();
-            btnBuscarCleinte = new Button();
+            btnBuscarCliente = new Button();
             txtBuscarCliente = new TextBox();
             btnVerTrans = new Button();
             btnDesactivar = new Button();
@@ -111,15 +111,14 @@
             btnTransferencia.UseVisualStyleBackColor = true;
             btnTransferencia.Click += btnTransferencia_Click;
             // 
-            // btnBuscarCleinte
+            // btnBuscarCliente
             // 
-            btnBuscarCleinte.Location = new Point(29, 74);
-            btnBuscarCleinte.Name = "btnBuscarCleinte";
-            btnBuscarCleinte.Size = new Size(145, 34);
-            btnBuscarCleinte.TabIndex = 7;
-            btnBuscarCleinte.Text = "Buscar Cliente";
-            btnBuscarCleinte.UseVisualStyleBackColor = true;
-            btnBuscarCleinte.Click += btnBuscarCleinte_Click;
+            btnBuscarCliente.Location = new Point(29, 74);
+            btnBuscarCliente.Name = "btnBuscarCliente";
+            btnBuscarCliente.Size = new Size(145, 34);
+            btnBuscarCliente.TabIndex = 7;
+            btnBuscarCliente.Text = "Buscar Cliente";
+            btnBuscarCliente.UseVisualStyleBackColor = true;
             // 
             // txtBuscarCliente
             // 
@@ -175,7 +174,7 @@
             Controls.Add(btnDesactivar);
             Controls.Add(btnVerTrans);
             Controls.Add(txtBuscarCliente);
-            Controls.Add(btnBuscarCleinte);
+            Controls.Add(btnBuscarCliente);
             Controls.Add(btnTransferencia);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -200,7 +199,7 @@
         private Label label1;
         private Label label2;
         private Button btnTransferencia;
-        private Button btnBuscarCleinte;
+        private Button btnBuscarCliente;
         private TextBox txtBuscarCliente;
         private Button btnVerTrans;
         private Button btnDesactivar;

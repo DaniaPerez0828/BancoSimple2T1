@@ -145,7 +145,7 @@ namespace BancoSimple2T1
             }
         }
 
-        private void btnBuscarCleinte_Click(object sender, EventArgs e)
+        private void btnBuscarCliente_Click(object sender, EventArgs e)
         {
             string patron = txtBuscarCliente.Text.Trim();
             if (string.IsNullOrEmpty(patron))
